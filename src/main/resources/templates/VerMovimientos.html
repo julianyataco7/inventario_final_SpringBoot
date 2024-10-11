@@ -211,54 +211,106 @@
 
             // Consultar movimientos cuando se hace clic en el botón "Buscar"
             $('#buscarBtn').on('click', function() {
+				
                 const fechaParam = $('#fecha').val(); 
-                const fecha = new Date(fechaParam + 'T00:00:00Z'); // Asegúrate de que la fecha esté en UTC
+				if(fechaParam == ""){		
+							const productoParam = $('#producto').val();
+				                const tipoMovimientoParam = $('#tipoMovimiento').val();
 
-                const productoParam = $('#producto').val();
-                const tipoMovimientoParam = $('#tipoMovimiento').val();
+				                $.ajax({
+				                    url: '/movimientos/buscar',
+				                    method: 'POST',
+				                    contentType: 'application/json', // Especifica el tipo de contenido
+				                    data: JSON.stringify({
+				                        "nombreProducto": productoParam,
+				                        "categoria": "",
+				                        "tipoMovimiento": tipoMovimientoParam,
+				                        "cantidad": "",
+				                        "fechaMovimiento": "" // Enviar la fecha en formato ISO
+				                    }),
+				                    success: function(movimientos) {
+				                        const tbody = $('#tablaMovimientos tbody');
+				                        tbody.empty(); // Limpiar la tabla antes de agregar nuevos datos
+				                        
+				                        if (movimientos.length === 0) {
+				                            tbody.append('<tr><td colspan="5" class="text-center">No hay movimientos encontrados</td></tr>');
+				                        } else {
+				                            movimientos.forEach(movimiento => {
+				                                // Aumentar un día a la fecha de cada movimiento
+				                                const fechaMovimientoOriginal = new Date(movimiento.fechaMovimiento);
+				                                fechaMovimientoOriginal.setDate(fechaMovimientoOriginal.getDate() + 1); // Aumentar un día
 
-                $.ajax({
-                    url: '/movimientos/buscar',
-                    method: 'POST',
-                    contentType: 'application/json', // Especifica el tipo de contenido
-                    data: JSON.stringify({
-                        "nombreProducto": productoParam,
-                        "categoria": "",
-                        "tipoMovimiento": tipoMovimientoParam,
-                        "cantidad": "",
-                        "fechaMovimiento": fecha.toISOString() // Enviar la fecha en formato ISO
-                    }),
-                    success: function(movimientos) {
-                        const tbody = $('#tablaMovimientos tbody');
-                        tbody.empty(); // Limpiar la tabla antes de agregar nuevos datos
-                        
-                        if (movimientos.length === 0) {
-                            tbody.append('<tr><td colspan="5" class="text-center">No hay movimientos encontrados</td></tr>');
-                        } else {
-                            movimientos.forEach(movimiento => {
-                                // Aumentar un día a la fecha de cada movimiento
-                                const fechaMovimientoOriginal = new Date(movimiento.fechaMovimiento);
-                                fechaMovimientoOriginal.setDate(fechaMovimientoOriginal.getDate() + 1); // Aumentar un día
+				                                // Usar el formato deseado para la fecha
+				                                const fechaFormateada = `${fechaMovimientoOriginal.getFullYear()}-${(fechaMovimientoOriginal.getMonth() + 1).toString().padStart(2, '0')}-${fechaMovimientoOriginal.getDate().toString().padStart(2, '0')}`;
 
-                                // Usar el formato deseado para la fecha
-                                const fechaFormateada = `${fechaMovimientoOriginal.getFullYear()}-${(fechaMovimientoOriginal.getMonth() + 1).toString().padStart(2, '0')}-${fechaMovimientoOriginal.getDate().toString().padStart(2, '0')}`;
+				                                tbody.append(`
+				                                    <tr>
+				                                        <td>${movimiento.nombreProducto}</td>
+				                                        <td>${movimiento.categoria}</td>
+				                                        <td>${movimiento.tipoMovimiento}</td>
+				                                        <td>${movimiento.cantidad}</td>
+				                                        <td>${fechaFormateada}</td> <!-- Usar la fecha formateada -->
+				                                    </tr>
+				                                `);
+				                            });
+				                        }
+				                    },
+				                    error: function(err) {
+				                        console.error('Error al buscar movimientos:', err);
+				                    }
+				                });}
+				else{
+					const fecha = new Date(fechaParam + 'T00:00:00Z'); // Asegúrate de que la fecha esté en UTC
+					const productoParam = $('#producto').val();
+					                const tipoMovimientoParam = $('#tipoMovimiento').val();
 
-                                tbody.append(`
-                                    <tr>
-                                        <td>${movimiento.nombreProducto}</td>
-                                        <td>${movimiento.categoria}</td>
-                                        <td>${movimiento.tipoMovimiento}</td>
-                                        <td>${movimiento.cantidad}</td>
-                                        <td>${fechaFormateada}</td> <!-- Usar la fecha formateada -->
-                                    </tr>
-                                `);
-                            });
-                        }
-                    },
-                    error: function(err) {
-                        console.error('Error al buscar movimientos:', err);
-                    }
-                });
+					                $.ajax({
+					                    url: '/movimientos/buscar',
+					                    method: 'POST',
+					                    contentType: 'application/json', // Especifica el tipo de contenido
+					                    data: JSON.stringify({
+					                        "nombreProducto": productoParam,
+					                        "categoria": "",
+					                        "tipoMovimiento": tipoMovimientoParam,
+					                        "cantidad": "",
+					                        "fechaMovimiento": fecha.toISOString() // Enviar la fecha en formato ISO
+					                    }),
+					                    success: function(movimientos) {
+					                        const tbody = $('#tablaMovimientos tbody');
+					                        tbody.empty(); // Limpiar la tabla antes de agregar nuevos datos
+					                        
+					                        if (movimientos.length === 0) {
+					                            tbody.append('<tr><td colspan="5" class="text-center">No hay movimientos encontrados</td></tr>');
+					                        } else {
+					                            movimientos.forEach(movimiento => {
+					                                // Aumentar un día a la fecha de cada movimiento
+					                                const fechaMovimientoOriginal = new Date(movimiento.fechaMovimiento);
+					                                fechaMovimientoOriginal.setDate(fechaMovimientoOriginal.getDate() + 1); // Aumentar un día
+
+					                                // Usar el formato deseado para la fecha
+					                                const fechaFormateada = `${fechaMovimientoOriginal.getFullYear()}-${(fechaMovimientoOriginal.getMonth() + 1).toString().padStart(2, '0')}-${fechaMovimientoOriginal.getDate().toString().padStart(2, '0')}`;
+
+					                                tbody.append(`
+					                                    <tr>
+					                                        <td>${movimiento.nombreProducto}</td>
+					                                        <td>${movimiento.categoria}</td>
+					                                        <td>${movimiento.tipoMovimiento}</td>
+					                                        <td>${movimiento.cantidad}</td>
+					                                        <td>${fechaFormateada}</td> <!-- Usar la fecha formateada -->
+					                                    </tr>
+					                                `);
+					                            });
+					                        }
+					                    },
+					                    error: function(err) {
+					                        console.error('Error al buscar movimientos:', err);
+					                    }
+					                });
+				}
+				
+               
+
+                
             });
         });
     </script>
