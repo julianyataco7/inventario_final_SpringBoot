@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Productos</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Estilos para el modal */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-top: 50px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Búsqueda de Productos</h1>
+    
+    <input type="text" id="nombreProducto" placeholder="Nombre del Producto">
+    <input type="text" id="nombreCategoria" placeholder="Nombre de la Categoría">
+    <button id="buscarBtn">Buscar</button>
+
+    <div id="resultado"></div>
+
+    <!-- Modal para generar movimiento -->
+    <div id="movimientoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Generar Movimiento</h2>
+            <form id="movimientoForm">
+                <label for="tipoMovimiento">Tipo de Movimiento:</label>
+                <select id="tipoMovimiento" name="tipoMovimiento">
+                    <option value="1">Ingreso</option>
+                    <option value="2">Salida</option>
+                </select><br><br>
+
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" id="cantidad" name="cantidad" min="1" required><br><br>
+
+                <input type="hidden" id="idProductoModal">
+                <button type="submit">Guardar Movimiento</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+		$(document).ready(function() {
+		    // Mostrar productos al cargar la página
+		    $.ajax({
+		        url: '/productos/Listar', // URL de tu endpoint
+		        method: 'GET',
+		        dataType: 'json',
+		        success: function(data) {
+		            var resultadoHtml = '<table border="1"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
+		            $.each(data, function(index, producto) {
+		                resultadoHtml += '<tr>' +
+		                    '<td>' + producto.producto + '</td>' +
+		                    '<td>' + producto.categoria + '</td>' +
+		                    '<td>' + producto.precio + '</td>' +
+		                    '<td>' + producto.cantidad + '</td>' +
+		                    '<td><button class="generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
+		                    '</tr>';
+		            });
+		            resultadoHtml += '</tbody></table>';
+		            $('#resultado').html(resultadoHtml);
+		        },
+		        error: function(xhr, status, error) {
+		            console.error('Error al obtener productos: ', error);
+		        }
+		    });
+
+		    // Buscar productos al hacer clic en "Buscar"
+		    $('#buscarBtn').click(function() {
+		        var nombreProducto = $('#nombreProducto').val();
+		        var nombreCategoria = $('#nombreCategoria').val();
+
+		        $.ajax({
+		            url: '/productos/buscar',  // URL del endpoint
+		            method: 'GET',
+		            data: {
+		                nombreProducto: nombreProducto,
+		                nombreCategoria: nombreCategoria
+		            },
+		            success: function(data) {
+		                var resultadoHtml = '<table border="1"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
+		                $.each(data, function(index, producto) {
+		                    resultadoHtml += '<tr>' +
+		                        '<td>' + producto.producto + '</td>' +
+		                        '<td>' + producto.categoria + '</td>' +
+		                        '<td>' + producto.precio + '</td>' +
+		                        '<td>' + producto.cantidad + '</td>' +
+		                        '<td><button class="generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
+		                        '</tr>';
+		                });
+		                resultadoHtml += '</tbody></table>';
+		                $('#resultado').html(resultadoHtml);
+		            },
+		            error: function(xhr, status, error) {
+		                $('#resultado').html('<p>Error al buscar productos.</p>');
+		            }
+		        });
+		    });
+
+		    // Asociar el evento de clic a los botones de "Generar Movimiento" (incluyendo los generados dinámicamente)
+		    $(document).on('click', '.generarMovimientoBtn', function() {
+		        var idProducto = $(this).data('id');
+		        $('#idProductoModal').val(idProducto);
+		        $('#movimientoModal').show(); // Mostrar el modal
+		    });
+
+		    // Cerrar el modal
+		    $('.close').click(function() {
+		        $('#movimientoModal').hide();
+		    });
+
+		    // Guardar movimiento al enviar el formulario
+		    $('#movimientoForm').submit(function(e) {
+		        e.preventDefault(); // Evita el comportamiento por defecto del formulario
+
+				var tipoMovimiento = parseInt($('#tipoMovimiento').val(), 10); // Asegúrate de que sea un entero
+				var cantidad = parseInt($('#cantidad').val(), 10); // Asegúrate de que sea un entero
+				var idProducto = parseInt($('#idProductoModal').val(), 10);
+
+		        // Enviar la solicitud AJAX para guardar el movimiento
+		        $.ajax({
+		            url: '/movimientos/insertar',
+		            method: 'POST',
+		            contentType: 'application/json',
+		            data: JSON.stringify({
+						producto: { idProducto: idProducto },
+						tipoMovimiento: { idTipoMovimiento: tipoMovimiento }, // Cambia esto
+						cantidad: cantidad,
+						fechaMovimiento: new Date().toISOString()
+		            }),
+		            success: function(response) {
+		                alert('Movimiento guardado con éxito.');
+		                $('#movimientoModal').hide(); // Cerrar el modal
+		            },
+		            error: function(xhr, status, error) {
+		                console.error('Error al guardar movimiento:', error);
+		                alert('Error al guardar el movimiento.');
+		            }
+		        });
+		    });
+		});
+
+    </script>
+</body>
+</html>
