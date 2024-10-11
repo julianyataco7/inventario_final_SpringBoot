@@ -1,6 +1,7 @@
 package com.example.Inventario_final.Models;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class MostrarMovimientoDTO {
 
@@ -8,15 +9,21 @@ public class MostrarMovimientoDTO {
     private String categoria;
     private String tipoMovimiento;
     private Integer cantidad;
-    private LocalDateTime fechaMovimiento;
+    private Date fechaMovimiento;
+    
+	public MostrarMovimientoDTO() {
+		super();
+	}
 
-    public MostrarMovimientoDTO(String nombreProducto, String categoria, String tipoMovimiento, Integer cantidad, LocalDateTime fechaMovimiento) {
-        this.nombreProducto = nombreProducto;
-        this.categoria = categoria;
-        this.tipoMovimiento = tipoMovimiento;
-        this.cantidad = cantidad;
-        this.fechaMovimiento = fechaMovimiento;
-    }
+	public MostrarMovimientoDTO(String nombreProducto, String categoria, String tipoMovimiento, Integer cantidad,
+			Date fechaMovimiento) {
+		super();
+		this.nombreProducto = nombreProducto;
+		this.categoria = categoria;
+		this.tipoMovimiento = tipoMovimiento;
+		this.cantidad = cantidad;
+		this.fechaMovimiento = fechaMovimiento;
+	}
 
 	public String getNombreProducto() {
 		return nombreProducto;
@@ -50,13 +57,17 @@ public class MostrarMovimientoDTO {
 		this.cantidad = cantidad;
 	}
 
-	public LocalDateTime getFechaMovimiento() {
+	public Date getFechaMovimiento() {
 		return fechaMovimiento;
 	}
 
-	public void setFechaMovimiento(LocalDateTime fechaMovimiento) {
+	public void setFechaMovimiento(Date fechaMovimiento) {
 		this.fechaMovimiento = fechaMovimiento;
 	}
+	
+	
+
+    
     
     
 

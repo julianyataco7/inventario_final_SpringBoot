@@ -77,6 +77,13 @@ public class ProductoController {
     }
 
     
+    @GetMapping("/obtener")
+    public ResponseEntity<List<Producto>> Obtenertablaproducto() {
+        List<Producto> productos = productoService.getAllProducto();
+        return ResponseEntity.ok(productos); // Retorna la lista de productos
+    }
+
+    
     @GetMapping("/login") 
 	public String loginPage() {
 		return "login";

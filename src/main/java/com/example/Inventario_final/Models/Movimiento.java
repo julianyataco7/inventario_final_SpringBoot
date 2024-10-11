@@ -1,10 +1,58 @@
 package com.example.Inventario_final.Models;
 
 import jakarta.persistence.*;
+
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "movimiento")
+
+@NamedStoredProcedureQuery(
+	    name = "Movimiento.ObtenerMovimientosTotales",
+	    procedureName = "sp_VerMovimientosTotales",
+	    resultSetMappings = "MostrarMovimientosTotalesDTOMapping" // Referencia al mapeo	   
+	)
+	@SqlResultSetMapping(
+	    name = "MostrarMovimientosTotalesDTOMapping",
+	    classes = @ConstructorResult(
+	        targetClass = MostrarMovimientoDTO.class,
+	        columns = {
+	            @ColumnResult(name = "PRODUCTO", type = String.class),
+	            @ColumnResult(name = "CATEGORIA", type = String.class),
+	            @ColumnResult(name = "TIPO_MOVIMIENTO", type = String.class),
+	            @ColumnResult(name = "CANTIDAD", type = Integer.class),
+	            @ColumnResult(name = "FECHA", type = Date.class)  // Asegúrate de usar el tipo adecuado
+	        }
+	    )
+	)
+/////////////// OBTENER MOVIMIENTOS POR FEECHA,PRODUCTO Y TIPO MOVIMIENTO
+@NamedStoredProcedureQuery(
+	    name = "Movimiento.ObtenerMovimientos",
+	    procedureName = "sp_VerMovimientos",
+	    resultSetMappings = "MostrarMovimientoDTOMapping", // Referencia al mapeo
+	    parameters = {
+	        @StoredProcedureParameter(mode = ParameterMode.IN, name = "fecha_param", type = String.class),
+	        @StoredProcedureParameter(mode = ParameterMode.IN, name = "producto_param", type = String.class),
+	        @StoredProcedureParameter(mode = ParameterMode.IN, name = "tipo_movimiento_param", type = String.class)
+	    }
+	)
+	@SqlResultSetMapping(
+	    name = "MostrarMovimientoDTOMapping",
+	    classes = @ConstructorResult(
+	        targetClass = MostrarMovimientoDTO.class,
+	        columns = {
+	            @ColumnResult(name = "PRODUCTO", type = String.class),
+	            @ColumnResult(name = "CATEGORIA", type = String.class),
+	            @ColumnResult(name = "TIPO_MOVIMIENTO", type = String.class),
+	            @ColumnResult(name = "CANTIDAD", type = Integer.class),
+	            @ColumnResult(name = "FECHA", type = Date.class)  // Asegúrate de usar el tipo adecuado
+	        }
+	    )
+	)
+
+
+
 public class Movimiento {
 
     @Id

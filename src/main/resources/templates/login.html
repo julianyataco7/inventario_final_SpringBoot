@@ -4,10 +4,10 @@
     <title>Login</title>
 
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
+
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #007f3f;
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -20,25 +20,34 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: 400px;
+            width: 300px;
+            text-align: center;
         }
 
-        h1 {
-            text-align: center;
+        .form-container img {
+            width: 100px;
             margin-bottom: 20px;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .btn {
+            width: 100%;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
-        <h1>Login</h1>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/7-eleven_logo.svg/272px-7-eleven_logo.svg.png" alt="7-Eleven Logo">
         <form th:action="@{/productos/login}" method="post">
             <div class="form-group">
-                <label for="username">Username:</label>
+                <label for="username">USERNAME:</label>
                 <input type="text" id="username" name="username" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
+                <label for="password">PASSWORD:</label>
                 <input type="password" id="password" name="password" class="form-control" required>
             </div>
             <div class="text-center">
@@ -46,7 +55,7 @@
             </div>
         </form>
     </div>
-	
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

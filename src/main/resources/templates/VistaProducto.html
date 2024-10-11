@@ -4,258 +4,365 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Búsqueda de Productos</title>
+    <!-- Agregar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* Estilos para el modal */
-        .modal {
-            display: none; /* Oculto por defecto */
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding-top: 50px;
+        body {
+            background-color: #f7f9fc; /* Fondo claro */
+            font-family: Arial, sans-serif; /* Fuente sencilla */
+            color: #333; /* Color de texto oscuro */
         }
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 30%;
+
+        /* Navbar Estilo */
+        .navbar {
+            background-color: #2a9d4d; /* Verde más oscuro */
         }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
+
+        .navbar-brand {
+            color: white !important; /* Color del texto de la marca */
             font-weight: bold;
         }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
+
+        .navbar-nav .nav-link {
+            color: white !important; /* Color de los enlaces */
+            font-weight: bold;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffc107 !important; /* Color en hover */
+        }
+
+        h1 {
+            color: #2a9d4d; /* Título en verde */
+            text-align: center; /* Centrar título */
+            font-size: 3rem; /* Tamaño de fuente más grande */
+            margin-top: 20px; /* Margen superior */
+            font-family: 'Arial Black', sans-serif; /* Fuente estilizada */
+        }
+
+        .btn-primary {
+            background-color: #ffc107; /* Botones de búsqueda en amarillo */
+            border-color: #ffc107;
+        }
+
+        .btn-primary:hover {
+            background-color: #e0a800; /* Hover de botón */
+            border-color: #e0a800;
+        }
+
+        .btn-success {
+            background-color: #2a9d4d; /* Botón de agregar en verde oscuro */
+            border-color: #2a9d4d;
+        }
+
+        .btn-success:hover {
+            background-color: #217c39; /* Hover de botón */
+            border-color: #217c39;
+        }
+
+        /* Estilos para el modal */
+        .modal-header {
+            background-color: #2a9d4d; /* Cabecera del modal en verde oscuro */
+            color: white; /* Texto blanco en el modal */
+        }
+
+        .modal-title {
+            font-weight: bold; /* Título en negrita */
+        }
+
+        .modal-content {
+            border-radius: 0.5rem; /* Bordes redondeados del modal */
+        }
+
+        /* Estilo de la tabla */
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse; /* Para colapsar bordes */
+        }
+
+        th, td {
+            padding: 10px; /* Espaciado interno */
+            text-align: center; /* Alinear texto en el centro */
+            border: 1px solid #dee2e6; /* Borde de tabla */
+        }
+
+        th {
+            background-color: #f1c40f; /* Encabezado de tabla en amarillo */
+            color: #333; /* Color de texto en encabezado */
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9; /* Fila par en color claro */
+        }
+
+        .modal {
+            display: none; /* Oculto por defecto */
         }
     </style>
 </head>
 <body>
-    <h1>Búsqueda de Productos</h1>
-    
-    <input type="text" id="nombreProducto" placeholder="Nombre del Producto">
-    <input type="text" id="nombreCategoria" placeholder="Nombre de la Categoría">
-    <button id="buscarBtn">Buscar</button>
-    <button id="agregarProductoBtn">Agregar Producto</button> <!-- Botón para agregar producto -->
-
-    <div id="resultado"></div>
-
-    <!-- Modal para generar movimiento -->
-    <div id="movimientoModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Generar Movimiento</h2>
-            <form id="movimientoForm">
-                <label for="tipoMovimiento">Tipo de Movimiento:</label>
-                <select id="tipoMovimiento" name="tipoMovimiento">
-                    <option value="1">Ingreso</option>
-                    <option value="2">Salida</option>
-                </select><br><br>
-
-                <label for="cantidad">Cantidad:</label>
-                <input type="number" id="cantidad" name="cantidad" min="1" required><br><br>
-
-                <input type="hidden" id="idProductoModal">
-                <button type="submit">Guardar Movimiento</button>
-            </form>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+		<a class="navbar-brand" href="#">Seven Eleven</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/movimientos">Movimientos</a>
+                </li>
+            </ul>
         </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Búsqueda de Productos</h1>
+        
+        <div class="form-group">
+            <input type="text" id="nombreProducto" class="form-control" placeholder="Nombre del Producto">
+        </div>
+        <div class="form-group">
+            <input type="text" id="nombreCategoria" class="form-control" placeholder="Nombre de la Categoría">
+        </div>
+        <button id="buscarBtn" class="btn btn-primary">Buscar</button>
+        <button id="agregarProductoBtn" class="btn btn-success">Agregar Producto</button>
+
+        <div id="resultado" class="mt-4"></div>
+
+        <!-- Modal para generar movimiento -->
+        <div id="movimientoModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Generar Movimiento</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="movimientoForm">
+                            <div class="form-group">
+                                <label for="tipoMovimiento">Tipo de Movimiento:</label>
+                                <select id="tipoMovimiento" name="tipoMovimiento" class="form-control">
+                                    <option value="1">Ingreso</option>
+                                    <option value="2">Salida</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="cantidad">Cantidad:</label>
+                                <input type="number" id="cantidad" name="cantidad" class="form-control" min="1" required>
+                            </div>
+                            <input type="hidden" id="idProductoModal">
+                            <button type="submit" class="btn btn-primary">Guardar Movimiento</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para agregar producto -->
+        <div id="agregarProductoModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Agregar Producto</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="productoForm">
+                            <div class="form-group">
+                                <label for="nombre">Nombre:</label>
+                                <input type="text" id="nombre" name="nombre" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="precio">Precio:</label>
+                                <input type="number" id="precio" name="precio" class="form-control" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="unidadMedida">Unidad de Medida:</label>
+                                <select id="unidadMedida" name="unidadMedida" class="form-control">
+                                    <option value="paquete">Paquete</option>
+                                    <option value="1kg">1 kg</option>
+                                    <option value="1lt">1 lt</option>
+                                    <option value="unidad">Unidad</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="categoria">Categoría:</label>
+                                <select id="categoria" name="categoria" class="form-control" required></select>
+                            </div>
+                            <button type="submit" class="btn btn-success">Agregar Producto</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Modal para agregar producto -->
-    <div id="agregarProductoModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Agregar Producto</h2>
-            <form id="productoForm">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" required><br><br>
+    <!-- Agregar Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-                <label for="precio">Precio:</label>
-                <input type="number" id="precio" name="precio" step="0.01" required><br><br>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-                <label for="unidadMedida">Unidad de Medida:</label>
-                <select id="unidadMedida" name="unidadMedida">
-                    <option value="paquete">Paquete</option>
-                    <option value="1kg">1 kg</option>
-                    <option value="1lt">1 lt</option>
-                    <option value="unidad">Unidad</option>
-                </select><br><br>
+	   <script>
+	       $(document).ready(function() {
+	           // Función para listar productos
+	           function listar_productos(){
+	               $.ajax({
+	                   url: '/productos/Listar', // URL de tu endpoint
+	                   method: 'GET',
+	                   dataType: 'json',
+	                   success: function(data) {
+	                       var resultadoHtml = '<table class="table table-bordered"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
+	                       $.each(data, function(index, producto) {
+	                           resultadoHtml += '<tr>' +
+	                               '<td>' + producto.producto + '</td>' +
+	                               '<td>' + producto.categoria + '</td>' +
+	                               '<td>' + producto.precio + '</td>' +
+	                               '<td>' + producto.cantidad + '</td>' +
+	                               '<td><button class="btn btn-info generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
+	                               '</tr>';
+	                       });
+	                       resultadoHtml += '</tbody></table>';
+	                       $('#resultado').html(resultadoHtml);
+	                   },
+	                   error: function(xhr, status, error) {
+	                       console.error('Error al obtener productos: ', error);
+	                   }
+	               });
+	           };
 
-                <label for="categoria">Categoría:</label>
-                <select id="categoria" name="categoria" required></select><br><br>
+	           // Buscar productos al hacer clic en "Buscar"
+	           $('#buscarBtn').click(function() {
+	               var nombreProducto = $('#nombreProducto').val();
+	               var nombreCategoria = $('#nombreCategoria').val();
 
-                <button type="submit">Agregar Producto</button>
-            </form>
-        </div>
-    </div>
+	               $.ajax({
+	                   url: '/productos/buscar',  // URL del endpoint
+	                   method: 'GET',
+	                   data: {
+	                       nombreProducto: nombreProducto,
+	                       nombreCategoria: nombreCategoria
+	                   },
+	                   success: function(data) {
+	                       var resultadoHtml = '<table class="table table-bordered"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
+	                       $.each(data, function(index, producto) {
+	                           resultadoHtml += '<tr>' +
+	                               '<td>' + producto.producto + '</td>' +
+	                               '<td>' + producto.categoria + '</td>' +
+	                               '<td>' + producto.precio + '</td>' +
+	                               '<td>' + producto.cantidad + '</td>' +
+	                               '<td><button class="btn btn-info generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
+	                               '</tr>';
+	                       });
+	                       resultadoHtml += '</tbody></table>';
+	                       $('#resultado').html(resultadoHtml);
+	                   },
+	                   error: function(xhr, status, error) {
+	                       $('#resultado').html('<p>Error al buscar productos.</p>');
+	                   }
+	               });
+	           });
 
-    <script>
-		$(document).ready(function() {
-		    // Función para listar productos
-		    function listar_productos(){
-				$.ajax({
-					url: '/productos/Listar', // URL de tu endpoint
-					method: 'GET',
-					dataType: 'json',
-					success: function(data) {
-						var resultadoHtml = '<table border="1"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
-						$.each(data, function(index, producto) {
-							resultadoHtml += '<tr>' +
-								'<td>' + producto.producto + '</td>' +
-								'<td>' + producto.categoria + '</td>' +
-								'<td>' + producto.precio + '</td>' +
-								'<td>' + producto.cantidad + '</td>' +
-								'<td><button class="generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
-								'</tr>';
-						});
-						resultadoHtml += '</tbody></table>';
-						$('#resultado').html(resultadoHtml);
-					},
-					error: function(xhr, status, error) {
-						console.error('Error al obtener productos: ', error);
-					}
-				});
-			};
-			
-		    // Buscar productos al hacer clic en "Buscar"
-		    $('#buscarBtn').click(function() {
-		        var nombreProducto = $('#nombreProducto').val();
-		        var nombreCategoria = $('#nombreCategoria').val();
+	           // Asociar el evento de clic a los botones de "Generar Movimiento"
+	           $(document).on('click', '.generarMovimientoBtn', function() {
+	               var idProducto = $(this).data('id');
+	               $('#idProductoModal').val(idProducto);
+	               $('#movimientoModal').modal('show'); // Mostrar el modal
+	           });
 
-		        $.ajax({
-		            url: '/productos/buscar',  // URL del endpoint
-		            method: 'GET',
-		            data: {
-		                nombreProducto: nombreProducto,
-		                nombreCategoria: nombreCategoria
-		            },
-		            success: function(data) {
-		                var resultadoHtml = '<table border="1"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
-		                $.each(data, function(index, producto) {
-		                    resultadoHtml += '<tr>' +
-		                        '<td>' + producto.producto + '</td>' +
-		                        '<td>' + producto.categoria + '</td>' +
-		                        '<td>' + producto.precio + '</td>' +
-		                        '<td>' + producto.cantidad + '</td>' +
-		                        '<td><button class="generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
-		                        '</tr>';
-		                });
-		                resultadoHtml += '</tbody></table>';
-		                $('#resultado').html(resultadoHtml);
-		            },
-		            error: function(xhr, status, error) {
-		                $('#resultado').html('<p>Error al buscar productos.</p>');
-		            }
-		        });
-		    });
+	           // Cerrar el modal de movimiento
+	           $(document).on('click', '.close', function() {
+	               $('#movimientoModal').modal('hide');
+	               $('#agregarProductoModal').modal('hide'); // También cerrar el modal de agregar producto
+	           });
 
-		    // Asociar el evento de clic a los botones de "Generar Movimiento"
-		    $(document).on('click', '.generarMovimientoBtn', function() {
-		        var idProducto = $(this).data('id');
-		        $('#idProductoModal').val(idProducto);
-		        $('#movimientoModal').show(); // Mostrar el modal
-		    });
+	           // Guardar movimiento al enviar el formulario
+	           $('#movimientoForm').submit(function(e) {
+	               e.preventDefault(); // Evita el comportamiento por defecto del formulario
 
-		    // Cerrar el modal de movimiento
-		    $('.close').click(function() {
-		        $('#movimientoModal').hide();
-		        $('#agregarProductoModal').hide(); // También cerrar el modal de agregar producto
-		    });
+	               var tipoMovimiento = parseInt($('#tipoMovimiento').val(), 10);
+	               var cantidad = parseInt($('#cantidad').val(), 10);
+	               var idProducto = parseInt($('#idProductoModal').val(), 10);
 
-		    // Guardar movimiento al enviar el formulario
-		    $('#movimientoForm').submit(function(e) {
-		        e.preventDefault(); // Evita el comportamiento por defecto del formulario
+	               $.ajax({
+	                   url: '/movimientos/insertar',
+	                   method: 'POST',
+	                   contentType: 'application/json',
+	                   data: JSON.stringify({
+	                       producto: { idProducto: idProducto },
+	                       tipoMovimiento: { idTipoMovimiento: tipoMovimiento },
+	                       cantidad: cantidad,
+	                       fechaMovimiento: new Date().toISOString()
+	                   }),
+	                   success: function(response) {
+	                       alert('Movimiento guardado con éxito.');
+	                       $('#movimientoModal').modal('hide'); // Cerrar el modal
+	                       listar_productos();
+	                   },
+	                   error: function(xhr, status, error) {
+	                       console.error('Error al guardar movimiento:', error);
+	                       alert('Error al guardar el movimiento.');
+	                   }
+	               });
+	           });
 
-				var tipoMovimiento = parseInt($('#tipoMovimiento').val(), 10);
-				var cantidad = parseInt($('#cantidad').val(), 10);
-				var idProducto = parseInt($('#idProductoModal').val(), 10);
+	           // Mostrar el modal para agregar producto
+	           $('#agregarProductoBtn').click(function() {
+	               // Llenar el combo de categorías
+	               $.ajax({
+	                   url: '/categorias/listar',
+	                   method: 'GET',
+	                   dataType: 'json',
+	                   success: function(data) {
+	                       var opciones = '<option value="">Seleccione una categoría</option>';
+	                       $.each(data, function(index, categoria) {
+	                           opciones += '<option value="' + categoria.idCategoria + '">' + categoria.nombre + '</option>';
+	                       });
+	                       $('#categoria').html(opciones);
+	                       $('#agregarProductoModal').modal('show'); // Mostrar el modal de agregar producto
+	                   },
+	                   error: function(xhr, status, error) {
+	                       console.error('Error al obtener categorías: ', error);
+	                   }
+	               });
+	           });
 
-		        $.ajax({
-		            url: '/movimientos/insertar',
-		            method: 'POST',
-		            contentType: 'application/json',
-		            data: JSON.stringify({
-						producto: { idProducto: idProducto },
-						tipoMovimiento: { idTipoMovimiento: tipoMovimiento },
-						cantidad: cantidad,
-						fechaMovimiento: new Date().toISOString()
-		            }),
-		            success: function(response) {
-		                alert('Movimiento guardado con éxito.');
-		                $('#movimientoModal').hide(); // Cerrar el modal
-						listar_productos();
-		            },
-		            error: function(xhr, status, error) {
-		                console.error('Error al guardar movimiento:', error);
-		                alert('Error al guardar el movimiento.');
-		            }
-		        });
-		    });
+	           // Agregar producto al enviar el formulario
+	           $('#productoForm').submit(function(e) {
+	               e.preventDefault(); // Evita el comportamiento por defecto del formulario
+	               var nombre = $('#nombre').val();
+	               var precio = parseFloat($('#precio').val());
+	               var unidadMedida = $('#unidadMedida').val();
+	               var categoria = parseInt($('#categoria').val(),10);
 
-		    // Mostrar el modal para agregar producto
-		    $('#agregarProductoBtn').click(function() {
-		        // Llenar el combo de categorías
-		        $.ajax({
-		            url: '/categorias/listar',
-		            method: 'GET',
-		            success: function(data) {
-		                var opcionesHtml = '';
-		                $.each(data, function(index, categoria) {
-		                    opcionesHtml += '<option value="' + categoria.idCategoria + '">' + categoria.nombre + '</option>';
-		                });
-		                $('#categoria').html(opcionesHtml);
-		            },
-		            error: function(xhr, status, error) {
-		                console.error('Error al obtener categorías:', error);
-		            }
-		        });
-		        $('#agregarProductoModal').show(); // Mostrar el modal
-		    });
+	               $.ajax({
+	                   url: '/productos/agregar',
+	                   method: 'POST',
+	                   contentType: 'application/json',
+	                   data: JSON.stringify({
+	                       nombre: nombre,
+	                       precio: precio,
+	                       unidadMedida: unidadMedida,
+	                       categoria: { idCategoria: categoria }
+	                   }),
+	                   success: function(response) {
+	                       alert('Producto agregado con éxito.');
+	                       $('#agregarProductoModal').modal('hide'); // Cerrar el modal
+	                       listar_productos(); // Actualizar la lista de productos
+	                   },
+	                   error: function(xhr, status, error) {
+	                       console.error('Error al agregar producto:', error);
+	                       alert('Error al agregar el producto.');
+	                   }
+	               });
+	           });
 
-		    // Agregar producto al enviar el formulario
-		    $('#productoForm').submit(function(e) {
-		        e.preventDefault(); // Evita el comportamiento por defecto del formulario
-
-		        var nombre = $('#nombre').val();
-		        var precio = parseFloat($('#precio').val());
-		        var unidadMedida = $('#unidadMedida').val();
-		        var categoria = parseInt($('#categoria').val(),10);
-
-		        $.ajax({
-		            url: '/productos/agregar',
-		            method: 'POST',
-		            contentType: 'application/json',
-		            data: JSON.stringify({
-		                nombre: nombre,
-		                precio: precio,
-		                unidadMedida: unidadMedida,
-		                categoria: { idCategoria: categoria }
-		            }),
-		            success: function(response) {
-		                alert('Producto agregado con éxito.');
-		                $('#agregarProductoModal').hide(); // Cerrar el modal
-		                listar_productos(); // Refrescar la lista de productos
-		            },
-		            error: function(xhr, status, error) {
-		                console.error('Error al agregar producto:', error);
-		                alert('Error al agregar el producto.');
-		            }
-		        });
-		    });
-
-		    // Listar productos al cargar la página
-		    listar_productos();
-		});
-    </script>
+	           // Listar productos al cargar la página
+	           listar_productos();
+	       });
+	   </script>
 </body>
 </html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimientos</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<style>
+	        body {
+	            background-color: #f7f9fc; /* Fondo claro */
+	            font-family: Arial, sans-serif; /* Fuente sencilla */
+	            color: #333; /* Color de texto oscuro */
+	        }
+
+	        /* Navbar Estilo */
+	        .navbar {
+	            background-color: #2a9d4d; /* Verde más oscuro */
+	        }
+
+	        .navbar-brand {
+	            color: white !important; /* Color del texto de la marca */
+	            font-weight: bold;
+	        }
+
+	        .navbar-nav .nav-link {
+	            color: white !important; /* Color de los enlaces */
+	            font-weight: bold;
+	        }
+
+	        .navbar-nav .nav-link:hover {
+	            color: #ffc107 !important; /* Color en hover */
+	        }
+
+	        h1 {
+	            color: #2a9d4d; /* Título en verde */
+	            text-align: center; /* Centrar título */
+	            font-size: 3rem; /* Tamaño de fuente más grande */
+	            margin-top: 20px; /* Margen superior */
+	            font-family: 'Arial Black', sans-serif; /* Fuente estilizada */
+	        }
+
+	        .btn-primary {
+	            background-color: #ffc107; /* Botones de búsqueda en amarillo */
+	            border-color: #ffc107;
+	        }
+
+	        .btn-primary:hover {
+	            background-color: #e0a800; /* Hover de botón */
+	            border-color: #e0a800;
+	        }
+
+	        .btn-success {
+	            background-color: #2a9d4d; /* Botón de agregar en verde oscuro */
+	            border-color: #2a9d4d;
+	        }
+
+	        .btn-success:hover {
+	            background-color: #217c39; /* Hover de botón */
+	            border-color: #217c39;
+	        }
+
+	        /* Estilos para el modal */
+	        .modal-header {
+	            background-color: #2a9d4d; /* Cabecera del modal en verde oscuro */
+	            color: white; /* Texto blanco en el modal */
+	        }
+
+	        .modal-title {
+	            font-weight: bold; /* Título en negrita */
+	        }
+
+	        .modal-content {
+	            border-radius: 0.5rem; /* Bordes redondeados del modal */
+	        }
+
+	        /* Estilo de la tabla */
+	        table {
+	            width: 100%;
+	            margin-top: 20px;
+	            border-collapse: collapse; /* Para colapsar bordes */
+	        }
+
+	        th, td {
+	            padding: 10px; /* Espaciado interno */
+	            text-align: center; /* Alinear texto en el centro */
+	            border: 1px solid #dee2e6; /* Borde de tabla */
+	        }
+
+	        th {
+	            background-color: #f1c40f; /* Encabezado de tabla en amarillo */
+	            color: #333; /* Color de texto en encabezado */
+	        }
+
+	        tbody tr:nth-child(even) {
+	            background-color: #f9f9f9; /* Fila par en color claro */
+	        }
+
+	        .modal {
+	            display: none; /* Oculto por defecto */
+	        }
+	    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">SEVEN ELEVEN</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/productos">Productos</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Consultar Movimientos</h2>
+        <div class="form-group">
+            <label for="fecha">Fecha:</label>
+            <input type="date" class="form-control" id="fecha">
+        </div>
+        <div class="form-group">
+            <label for="tipoMovimiento">Tipo de Movimiento:</label>
+            <select class="form-control" id="tipoMovimiento">
+                <option value="">Seleccionar</option>
+                <option value="ingreso">Ingreso</option>
+                <option value="salida">Salida</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="producto">Producto:</label>
+            <select class="form-control" id="producto">
+                <option value="">Cargando productos...</option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary" id="buscarBtn">Buscar</button> <!-- Botón de búsqueda -->
+
+        <h3 class="mt-5">Movimientos:</h3>
+        <table class="table table-bordered mt-3" id="tablaMovimientos">
+            <thead>
+                <tr>
+                    <th>Nombre Producto</th>
+                    <th>Categoría</th>
+                    <th>Tipo Movimiento</th>
+                    <th>Cantidad</th>
+                    <th>Fecha Movimiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí se agregarán los movimientos mediante AJAX -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Cargar productos al iniciar la página
+            $.ajax({
+                url: '/productos/obtener',
+                method: 'GET',
+                success: function(data) {
+                    const productoSelect = $('#producto');
+                    productoSelect.empty(); // Limpiar el combo box
+                    productoSelect.append('<option value="">Seleccionar Producto</option>'); // Opción por defecto
+                    data.forEach(producto => {
+                        productoSelect.append(`<option value="${producto.nombre}">${producto.nombre}</option>`);
+                    });
+                },
+                error: function(err) {
+                    console.error('Error al cargar productos:', err);
+                }
+            });
+
+            // Cargar movimientos automáticamente al cargar la página
+            cargarMovimientos();
+
+            function cargarMovimientos() {
+                $.ajax({
+                    url: '/movimientos/listar',
+                    method: 'GET',
+                    success: function(movimientos) {
+                        const tbody = $('#tablaMovimientos tbody');
+                        tbody.empty(); // Limpiar la tabla antes de agregar nuevos datos
+                        
+                        if (movimientos.length === 0) {
+                            tbody.append('<tr><td colspan="5" class="text-center">No hay movimientos encontrados</td></tr>');
+                        } else {
+                            movimientos.forEach(movimiento => {
+                                tbody.append(`
+                                    <tr>
+                                        <td>${movimiento.nombreProducto}</td>
+                                        <td>${movimiento.categoria}</td>
+                                        <td>${movimiento.tipoMovimiento}</td>
+                                        <td>${movimiento.cantidad}</td>
+                                        <td>${new Date(movimiento.fechaMovimiento).toLocaleDateString()}</td>
+                                    </tr>
+                                `);
+                            });
+                        }
+                    },
+                    error: function(err) {
+                        console.error('Error al cargar movimientos:', err);
+                    }
+                });
+            }
+
+            // Consultar movimientos cuando se hace clic en el botón "Buscar"
+            $('#buscarBtn').on('click', function() {
+                const fechaParam = $('#fecha').val(); 
+                const fecha = new Date(fechaParam + 'T00:00:00Z'); // Asegúrate de que la fecha esté en UTC
+
+                const productoParam = $('#producto').val();
+                const tipoMovimientoParam = $('#tipoMovimiento').val();
+
+                $.ajax({
+                    url: '/movimientos/buscar',
+                    method: 'POST',
+                    contentType: 'application/json', // Especifica el tipo de contenido
+                    data: JSON.stringify({
+                        "nombreProducto": productoParam,
+                        "categoria": "",
+                        "tipoMovimiento": tipoMovimientoParam,
+                        "cantidad": "",
+                        "fechaMovimiento": fecha.toISOString() // Enviar la fecha en formato ISO
+                    }),
+                    success: function(movimientos) {
+                        const tbody = $('#tablaMovimientos tbody');
+                        tbody.empty(); // Limpiar la tabla antes de agregar nuevos datos
+                        
+                        if (movimientos.length === 0) {
+                            tbody.append('<tr><td colspan="5" class="text-center">No hay movimientos encontrados</td></tr>');
+                        } else {
+                            movimientos.forEach(movimiento => {
+                                // Aumentar un día a la fecha de cada movimiento
+                                const fechaMovimientoOriginal = new Date(movimiento.fechaMovimiento);
+                                fechaMovimientoOriginal.setDate(fechaMovimientoOriginal.getDate() + 1); // Aumentar un día
+
+                                // Usar el formato deseado para la fecha
+                                const fechaFormateada = `${fechaMovimientoOriginal.getFullYear()}-${(fechaMovimientoOriginal.getMonth() + 1).toString().padStart(2, '0')}-${fechaMovimientoOriginal.getDate().toString().padStart(2, '0')}`;
+
+                                tbody.append(`
+                                    <tr>
+                                        <td>${movimiento.nombreProducto}</td>
+                                        <td>${movimiento.categoria}</td>
+                                        <td>${movimiento.tipoMovimiento}</td>
+                                        <td>${movimiento.cantidad}</td>
+                                        <td>${fechaFormateada}</td> <!-- Usar la fecha formateada -->
+                                    </tr>
+                                `);
+                            });
+                        }
+                    },
+                    error: function(err) {
+                        console.error('Error al buscar movimientos:', err);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

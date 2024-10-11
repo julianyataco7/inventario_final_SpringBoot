@@ -1,118 +1,127 @@
-	package com.example.Inventario_final.Models;
-	
-	import jakarta.persistence.*;
-	import java.math.BigDecimal;
-	
-	@Entity
-	@Table(name = "producto")
-	@NamedStoredProcedureQuery(
-	    name = "Producto.ObtenerProductos",
-	    procedureName = "sp_VerProductos",
-	    resultSetMappings = "MostrarProductoDTOMapping",  // Asegúrate de referenciar el mapeo
-	    parameters = {
-	        @StoredProcedureParameter(mode = ParameterMode.IN, name = "nombreProducto", type = String.class),
-	        @StoredProcedureParameter(mode = ParameterMode.IN, name = "nombreCategoria", type = String.class)
-	    }
-	)
-	@SqlResultSetMapping(
-	    name = "MostrarProductoDTOMapping",
-	    columns = {
-	        @ColumnResult(name = "idProducto"),  // Asegúrate de que esto coincida
-	        @ColumnResult(name = "producto"),     // Asegúrate de que esto coincida
-	        @ColumnResult(name = "categoria"),     // Asegúrate de que esto coincida
-	        @ColumnResult(name = "precio"),        // Asegúrate de que esto coincida
-	        @ColumnResult(name = "cantidad")       // Asegúrate de que esto coincida
-	    }
-	)
+package com.example.Inventario_final.Models;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.math.BigDecimal;
+
+@Entity
+@Table(name = "producto")
+@NamedStoredProcedureQuery(
+    name = "Producto.ObtenerProductos",
+    procedureName = "sp_VerProductos",
+    resultSetMappings = "MostrarProductoDTOMapping",
+    parameters = {
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "nombreProducto", type = String.class),
+        @StoredProcedureParameter(mode = ParameterMode.IN, name = "nombreCategoria", type = String.class)
+    }
+)
+@SqlResultSetMapping(
+    name = "MostrarProductoDTOMapping",
+    columns = {
+        @ColumnResult(name = "idProducto"),
+        @ColumnResult(name = "producto"),
+        @ColumnResult(name = "categoria"),
+        @ColumnResult(name = "precio"),
+        @ColumnResult(name = "cantidad")
+    }
+)
 ////////////////////
-	@NamedStoredProcedureQuery(
-		    name = "Producto.ObtenerProductosTotal",
-		    procedureName = "sp_VerProductosTotal",
-		    resultSetMappings = "MostrarProductoDTOMappingTotal"  // Asegúrate de referenciar el mapeo		   
-		)
-	@SqlResultSetMapping(
-		    name = "MostrarProductoDTOMappingTotal",
-		    columns = {
-		        @ColumnResult(name = "idProducto"),  // Asegúrate de que esto coincida
-		        @ColumnResult(name = "producto"),     // Asegúrate de que esto coincida
-		        @ColumnResult(name = "categoria"),     // Asegúrate de que esto coincida
-		        @ColumnResult(name = "precio"),        // Asegúrate de que esto coincida
-		        @ColumnResult(name = "cantidad")       // Asegúrate de que esto coincida
-		    }
-		)
-	public class Producto {
-	
-	    @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private Integer idProducto;
-	
-	    @Column(nullable = false, length = 100)
-	    private String nombre;
-	
-	    @Column(nullable = false)
-	    private BigDecimal precio;
-	
-	    @Column(nullable = false, length = 20)
-	    private String unidadMedida;
-	
-	    @ManyToOne
-	    @JoinColumn(name = "id_categoria", nullable = false)
-	    private Categoria Categoria;  // Cambiar el nombre a idCategoria
-	
-	    // Constructores, getters y setters
-	    public Producto() {
-	        super();
-	    }
+@NamedStoredProcedureQuery(
+    name = "Producto.ObtenerProductosTotal",
+    procedureName = "sp_VerProductosTotal",
+    resultSetMappings = "MostrarProductoDTOMappingTotal"
+)
+@SqlResultSetMapping(
+    name = "MostrarProductoDTOMappingTotal",
+    columns = {
+        @ColumnResult(name = "idProducto"),
+        @ColumnResult(name = "producto"),
+        @ColumnResult(name = "categoria"),
+        @ColumnResult(name = "precio"),
+        @ColumnResult(name = "cantidad")
+    }
+)
+public class Producto {
 
-		public Producto(Integer idProducto, String nombre, BigDecimal precio, String unidadMedida,
-				com.example.Inventario_final.Models.Categoria categoria) {
-			super();
-			this.idProducto = idProducto;
-			this.nombre = nombre;
-			this.precio = precio;
-			this.unidadMedida = unidadMedida;
-			Categoria = categoria;
-		}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idProducto;
 
-		public Integer getIdProducto() {
-			return idProducto;
-		}
+    @NotBlank(message = "El nombre no puede estar vacío.")
+    @Size(max = 100, message = "El nombre no puede exceder los 100 caracteres.")
+    @Column(nullable = false, length = 100)
+    private String nombre;
 
-		public void setIdProducto(Integer idProducto) {
-			this.idProducto = idProducto;
-		}
+    @NotNull(message = "El precio no puede ser nulo.")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor que 0.")
+    @Column(nullable = false)
+    private BigDecimal precio;
 
-		public String getNombre() {
-			return nombre;
-		}
+    @NotBlank(message = "La unidad de medida no puede estar vacía.")
+    @Size(max = 20, message = "La unidad de medida no puede exceder los 20 caracteres.")
+    @Column(nullable = false, length = 20)
+    private String unidadMedida;
 
-		public void setNombre(String nombre) {
-			this.nombre = nombre;
-		}
+    @ManyToOne
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;  // Cambiar el nombre a idCategoria
 
-		public BigDecimal getPrecio() {
-			return precio;
-		}
+    // Constructores, getters y setters
+    public Producto() {
+        super();
+    }
 
-		public void setPrecio(BigDecimal precio) {
-			this.precio = precio;
-		}
+    public Producto(Integer idProducto, String nombre, BigDecimal precio, String unidadMedida,
+                    Categoria categoria) {
+        super();
+        this.idProducto = idProducto;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.unidadMedida = unidadMedida;
+        this.categoria = categoria;
+    }
 
-		public String getUnidadMedida() {
-			return unidadMedida;
-		}
+    public Integer getIdProducto() {
+        return idProducto;
+    }
 
-		public void setUnidadMedida(String unidadMedida) {
-			this.unidadMedida = unidadMedida;
-		}
+    public void setIdProducto(Integer idProducto) {
+        this.idProducto = idProducto;
+    }
 
-		public Categoria getCategoria() {
-			return Categoria;
-		}
+    public String getNombre() {
+        return nombre;
+    }
 
-		public void setCategoria(Categoria categoria) {
-			Categoria = categoria;
-		}
-	
-	  
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public String getUnidadMedida() {
+        return unidadMedida;
+    }
+
+    public void setUnidadMedida(String unidadMedida) {
+        this.unidadMedida = unidadMedida;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+}
