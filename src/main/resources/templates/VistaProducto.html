@@ -46,6 +46,7 @@
     <input type="text" id="nombreProducto" placeholder="Nombre del Producto">
     <input type="text" id="nombreCategoria" placeholder="Nombre de la Categoría">
     <button id="buscarBtn">Buscar</button>
+    <button id="agregarProductoBtn">Agregar Producto</button> <!-- Botón para agregar producto -->
 
     <div id="resultado"></div>
 
@@ -70,32 +71,62 @@
         </div>
     </div>
 
+    <!-- Modal para agregar producto -->
+    <div id="agregarProductoModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Agregar Producto</h2>
+            <form id="productoForm">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required><br><br>
+
+                <label for="precio">Precio:</label>
+                <input type="number" id="precio" name="precio" step="0.01" required><br><br>
+
+                <label for="unidadMedida">Unidad de Medida:</label>
+                <select id="unidadMedida" name="unidadMedida">
+                    <option value="paquete">Paquete</option>
+                    <option value="1kg">1 kg</option>
+                    <option value="1lt">1 lt</option>
+                    <option value="unidad">Unidad</option>
+                </select><br><br>
+
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required></select><br><br>
+
+                <button type="submit">Agregar Producto</button>
+            </form>
+        </div>
+    </div>
+
     <script>
 		$(document).ready(function() {
-		    // Mostrar productos al cargar la página
-		    $.ajax({
-		        url: '/productos/Listar', // URL de tu endpoint
-		        method: 'GET',
-		        dataType: 'json',
-		        success: function(data) {
-		            var resultadoHtml = '<table border="1"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
-		            $.each(data, function(index, producto) {
-		                resultadoHtml += '<tr>' +
-		                    '<td>' + producto.producto + '</td>' +
-		                    '<td>' + producto.categoria + '</td>' +
-		                    '<td>' + producto.precio + '</td>' +
-		                    '<td>' + producto.cantidad + '</td>' +
-		                    '<td><button class="generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
-		                    '</tr>';
-		            });
-		            resultadoHtml += '</tbody></table>';
-		            $('#resultado').html(resultadoHtml);
-		        },
-		        error: function(xhr, status, error) {
-		            console.error('Error al obtener productos: ', error);
-		        }
-		    });
-
+		    // Función para listar productos
+		    function listar_productos(){
+				$.ajax({
+					url: '/productos/Listar', // URL de tu endpoint
+					method: 'GET',
+					dataType: 'json',
+					success: function(data) {
+						var resultadoHtml = '<table border="1"><thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Cantidad</th><th>Acción</th></tr></thead><tbody>';
+						$.each(data, function(index, producto) {
+							resultadoHtml += '<tr>' +
+								'<td>' + producto.producto + '</td>' +
+								'<td>' + producto.categoria + '</td>' +
+								'<td>' + producto.precio + '</td>' +
+								'<td>' + producto.cantidad + '</td>' +
+								'<td><button class="generarMovimientoBtn" data-id="' + producto.idProducto + '">Generar Movimiento</button></td>' +
+								'</tr>';
+						});
+						resultadoHtml += '</tbody></table>';
+						$('#resultado').html(resultadoHtml);
+					},
+					error: function(xhr, status, error) {
+						console.error('Error al obtener productos: ', error);
+					}
+				});
+			};
+			
 		    // Buscar productos al hacer clic en "Buscar"
 		    $('#buscarBtn').click(function() {
 		        var nombreProducto = $('#nombreProducto').val();
@@ -128,40 +159,41 @@
 		        });
 		    });
 
-		    // Asociar el evento de clic a los botones de "Generar Movimiento" (incluyendo los generados dinámicamente)
+		    // Asociar el evento de clic a los botones de "Generar Movimiento"
 		    $(document).on('click', '.generarMovimientoBtn', function() {
 		        var idProducto = $(this).data('id');
 		        $('#idProductoModal').val(idProducto);
 		        $('#movimientoModal').show(); // Mostrar el modal
 		    });
 
-		    // Cerrar el modal
+		    // Cerrar el modal de movimiento
 		    $('.close').click(function() {
 		        $('#movimientoModal').hide();
+		        $('#agregarProductoModal').hide(); // También cerrar el modal de agregar producto
 		    });
 
 		    // Guardar movimiento al enviar el formulario
 		    $('#movimientoForm').submit(function(e) {
 		        e.preventDefault(); // Evita el comportamiento por defecto del formulario
 
-				var tipoMovimiento = parseInt($('#tipoMovimiento').val(), 10); // Asegúrate de que sea un entero
-				var cantidad = parseInt($('#cantidad').val(), 10); // Asegúrate de que sea un entero
+				var tipoMovimiento = parseInt($('#tipoMovimiento').val(), 10);
+				var cantidad = parseInt($('#cantidad').val(), 10);
 				var idProducto = parseInt($('#idProductoModal').val(), 10);
 
-		        // Enviar la solicitud AJAX para guardar el movimiento
 		        $.ajax({
 		            url: '/movimientos/insertar',
 		            method: 'POST',
 		            contentType: 'application/json',
 		            data: JSON.stringify({
 						producto: { idProducto: idProducto },
-						tipoMovimiento: { idTipoMovimiento: tipoMovimiento }, // Cambia esto
+						tipoMovimiento: { idTipoMovimiento: tipoMovimiento },
 						cantidad: cantidad,
 						fechaMovimiento: new Date().toISOString()
 		            }),
 		            success: function(response) {
 		                alert('Movimiento guardado con éxito.');
 		                $('#movimientoModal').hide(); // Cerrar el modal
+						listar_productos();
 		            },
 		            error: function(xhr, status, error) {
 		                console.error('Error al guardar movimiento:', error);
@@ -169,8 +201,61 @@
 		            }
 		        });
 		    });
-		});
 
+		    // Mostrar el modal para agregar producto
+		    $('#agregarProductoBtn').click(function() {
+		        // Llenar el combo de categorías
+		        $.ajax({
+		            url: '/categorias/listar',
+		            method: 'GET',
+		            success: function(data) {
+		                var opcionesHtml = '';
+		                $.each(data, function(index, categoria) {
+		                    opcionesHtml += '<option value="' + categoria.idCategoria + '">' + categoria.nombre + '</option>';
+		                });
+		                $('#categoria').html(opcionesHtml);
+		            },
+		            error: function(xhr, status, error) {
+		                console.error('Error al obtener categorías:', error);
+		            }
+		        });
+		        $('#agregarProductoModal').show(); // Mostrar el modal
+		    });
+
+		    // Agregar producto al enviar el formulario
+		    $('#productoForm').submit(function(e) {
+		        e.preventDefault(); // Evita el comportamiento por defecto del formulario
+
+		        var nombre = $('#nombre').val();
+		        var precio = parseFloat($('#precio').val());
+		        var unidadMedida = $('#unidadMedida').val();
+		        var categoria = parseInt($('#categoria').val(),10);
+
+		        $.ajax({
+		            url: '/productos/agregar',
+		            method: 'POST',
+		            contentType: 'application/json',
+		            data: JSON.stringify({
+		                nombre: nombre,
+		                precio: precio,
+		                unidadMedida: unidadMedida,
+		                categoria: { idCategoria: categoria }
+		            }),
+		            success: function(response) {
+		                alert('Producto agregado con éxito.');
+		                $('#agregarProductoModal').hide(); // Cerrar el modal
+		                listar_productos(); // Refrescar la lista de productos
+		            },
+		            error: function(xhr, status, error) {
+		                console.error('Error al agregar producto:', error);
+		                alert('Error al agregar el producto.');
+		            }
+		        });
+		    });
+
+		    // Listar productos al cargar la página
+		    listar_productos();
+		});
     </script>
 </body>
 </html>

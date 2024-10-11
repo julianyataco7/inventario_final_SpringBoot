@@ -12,34 +12,30 @@ public class TipoMovimiento {
 
     @Column(nullable = false, length = 25)
     private String nombre;
-    
-    
-	public TipoMovimiento() {
-		super();
-	}
 
-	public TipoMovimiento(Integer idTipo, String nombre) {
-		super();
-		this.idTipoMovimiento = idTipo;
-		this.nombre = nombre;
-	}
+    public TipoMovimiento() {
+        super();
+    }
 
-	public Integer getIdTipo() {
-		return idTipoMovimiento;
-	}
+    public TipoMovimiento(Integer idTipoMovimiento, String nombre) {
+        super();
+        this.idTipoMovimiento = idTipoMovimiento;
+        this.nombre = nombre;
+    }
 
-	public void setIdTipo(Integer idTipo) {
-		this.idTipoMovimiento = idTipo;
-	}
+    public Integer getIdTipoMovimiento() { // Método añadido
+        return idTipoMovimiento;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public void setIdTipoMovimiento(Integer idTipoMovimiento) { // Método corregido
+        this.idTipoMovimiento = idTipoMovimiento;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-    
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 }
-

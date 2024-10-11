@@ -57,59 +57,62 @@
 	
 	    @ManyToOne
 	    @JoinColumn(name = "id_categoria", nullable = false)
-	    private Categoria idCategoria;  // Cambiar el nombre a idCategoria
+	    private Categoria Categoria;  // Cambiar el nombre a idCategoria
 	
 	    // Constructores, getters y setters
 	    public Producto() {
 	        super();
 	    }
+
+		public Producto(Integer idProducto, String nombre, BigDecimal precio, String unidadMedida,
+				com.example.Inventario_final.Models.Categoria categoria) {
+			super();
+			this.idProducto = idProducto;
+			this.nombre = nombre;
+			this.precio = precio;
+			this.unidadMedida = unidadMedida;
+			Categoria = categoria;
+		}
+
+		public Integer getIdProducto() {
+			return idProducto;
+		}
+
+		public void setIdProducto(Integer idProducto) {
+			this.idProducto = idProducto;
+		}
+
+		public String getNombre() {
+			return nombre;
+		}
+
+		public void setNombre(String nombre) {
+			this.nombre = nombre;
+		}
+
+		public BigDecimal getPrecio() {
+			return precio;
+		}
+
+		public void setPrecio(BigDecimal precio) {
+			this.precio = precio;
+		}
+
+		public String getUnidadMedida() {
+			return unidadMedida;
+		}
+
+		public void setUnidadMedida(String unidadMedida) {
+			this.unidadMedida = unidadMedida;
+		}
+
+		public Categoria getCategoria() {
+			return Categoria;
+		}
+
+		public void setCategoria(Categoria categoria) {
+			Categoria = categoria;
+		}
 	
-	    public Producto(Integer idProducto, String nombre, BigDecimal precio, String unidadMedida, Categoria idCategoria) {
-	        super();
-	        this.idProducto = idProducto;
-	        this.nombre = nombre;
-	        this.precio = precio;
-	        this.unidadMedida = unidadMedida;
-	        this.idCategoria = idCategoria;  // Cambiar a idCategoria
-	    }
-	
-	    public Integer getIdProducto() {
-	        return idProducto;
-	    }
-	
-	    public void setIdProducto(Integer idProducto) {
-	        this.idProducto = idProducto;
-	    }
-	
-	    public String getNombre() {
-	        return nombre;
-	    }
-	
-	    public void setNombre(String nombre) {
-	        this.nombre = nombre;
-	    }
-	
-	    public BigDecimal getPrecio() {
-	        return precio;
-	    }
-	
-	    public void setPrecio(BigDecimal precio) {
-	        this.precio = precio;
-	    }
-	
-	    public String getUnidadMedida() {
-	        return unidadMedida;
-	    }
-	
-	    public void setUnidadMedida(String unidadMedida) {
-	        this.unidadMedida = unidadMedida;
-	    }
-	
-	    public Categoria getIdCategoria() {  // Cambiar a idCategoria
-	        return idCategoria;
-	    }
-	
-	    public void setIdCategoria(Categoria idCategoria) {  // Cambiar a idCategoria
-	        this.idCategoria = idCategoria;
-	    }
+	  
 	}

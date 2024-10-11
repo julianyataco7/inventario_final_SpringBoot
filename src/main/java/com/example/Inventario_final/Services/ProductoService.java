@@ -80,6 +80,10 @@ public class ProductoService {
     		return productoRepository.findAll();
     	}
         
+        public Producto AgregarProducto(Producto producto){
+    		return productoRepository.save(producto);
+    	}
+        
       
     }
 
