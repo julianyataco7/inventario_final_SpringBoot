@@ -33,6 +33,7 @@ public class ProductoController {
     @GetMapping("")
     public String mostrarVistaProductos(Model model) {
         return "VistaProducto"; // Nombre del archivo HTML sin la extensión
+        
     }
     
     @GetMapping("/Listar")

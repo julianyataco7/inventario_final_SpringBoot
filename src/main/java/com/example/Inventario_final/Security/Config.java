@@ -18,9 +18,11 @@ public class Config {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    http
 	        .authorizeHttpRequests((requests) -> requests
-	            .requestMatchers("/productos/buscar").authenticated() // Requiere autenticación para listar
-	            .requestMatchers("/productos/**").permitAll() // Permite acceso a otras rutas bajo /productos sin autenticación
-	            .anyRequest().permitAll() // Permite acceso a todas las demás rutas sin autenticación
+	            .requestMatchers("/productos/**").authenticated() // Requiere autenticación para listar
+	            .requestMatchers("/categorias/**").authenticated()
+	            .requestMatchers("/movimientos/**").authenticated()
+	            //.requestMatchers("/productos/**").permitAll() // si Permite acceso a otras rutas bajo /productos sin autenticación
+	            //.anyRequest().permitAll() // si Permite acceso a todas las demás rutas sin autenticación
 	        )
 	        .formLogin((form) -> form
 	            .loginPage("/productos/login") // Página de login personalizada
