@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/inventario
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: julian
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: julian
+      MYSQL_DATABASE: Inventario_Final
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
